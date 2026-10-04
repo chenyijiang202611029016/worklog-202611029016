@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高等数学（上册）伴学站 · 同济八版</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button id="menuBtn" class="menu-btn" aria-label="菜单">☰</button>
+  <div class="brand">
+    <span class="logo">∫</span>
+    <div>
+      <div class="brand-title" id="siteTitle"></div>
+      <div class="brand-sub" id="siteSub"></div>
+    </div>
+  </div>
+  <div class="progress-pill" id="progressPill">进度 0%</div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      <p>依据：同济大学数学科学学院<br>《高等数学》第八版 · 上册</p>
+    </div>
+  </aside>
+
+  <main class="content" id="content"><!-- 由 JS 渲染 --></main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

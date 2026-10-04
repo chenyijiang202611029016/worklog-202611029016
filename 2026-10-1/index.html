@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>程序设计基础 · 零基础入门（C / C++ 双语）</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2328; --muted:#6a737d;
+    --brand:#2563eb; --brand-soft:#eff4ff; --line:#e5e7eb;
+    --green:#16a34a; --green-soft:#ecfdf3; --amber:#b45309; --amber-soft:#fffbeb;
+    --red:#dc2626; --code-bg:#f3f4f6; --code-kw:#7c3aed; --code-str:#b45309;
+    --code-fn:#2563eb; --code-num:#0e7490; --code-cm:#9ca3af;
+    --cpp:#7c3aed; --cpp-soft:#f5f3ff;
+    --sidebar-w:272px; --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.75}
+  /* ---------- 布局 ---------- */
+  .wrap{display:flex;min-height:100vh}
+  aside{width:var(--sidebar-w);background:var(--card);border-right:1px solid var(--line);
+    position:fixed;top:0;bottom:0;left:0;overflow-y:auto;padding:22px 14px;z-index:10}
+  main{flex:1;margin-left:var(--sidebar-w);padding:34px 44px 90px;max-width:1020px}
+  .logo{font-size:19px;font-weight:800;padding:4px 10px 6px}
+  .logo span{color:var(--brand)}
+  .logo-sub{font-size:11px;color:var(--muted);padding:0 10px 14px;border-bottom:1px solid var(--line);margin-bottom:12px}
+  .nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;
+    cursor:pointer;font-size:14px;color:var(--muted);margin-bottom:2px;transition:.15s;user-select:none}
+  .nav-item:hover{background:var(--brand-soft);color:var(--brand)}
+  .nav-item.active{background:var(--brand);color:#fff;font-weight:600}
+  .nav-item .tick{margin-left:auto;font-size:12px;color:var(--green);display:none}
+  .nav-item.active .tick{color:#fff}
+  .nav-item.done .tick{display:inline}
+  .nav-item.done{color:var(--ink)}
+  .prog-box{margin:12px 10px 8px;font-size:12px;color:var(--muted)}
+  .prog-bar{height:8px;background:var(--code-bg);border-radius:99px;overflow:hidden;margin-top:6px}
+  .prog-fill{height:100%;width:0%;background:linear-gradient(90deg,#2563eb,#16a34a);border-radius:99px;transition:width .5s}
+  /* ---------- C/C++ 语言切换 ---------- */
+  .lang-switch{display:flex;gap:6px;margin:10px;background:var(--code-bg);border-radius:12px;padding:5px}
+  .lang-switch button{flex:1;border:none;background:transparent;padding:8px 0;border-radius:9px;
+    font-size:13px;font-weight:700;cursor:pointer;color:var(--muted);transition:.2s}
+  .lang-switch button.on-c{background:#fff;color:var(--brand);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+  .lang-switch button.on-cpp{background:#fff;color:var(--cpp);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+  body.mode-c .lang-cpp{display:none}
+  body.mode-cpp .lang-c{display:none}
+  /* ---------- 章节 ---------- */
+  section.chapter{display:none;animation:fade .35s}
+  section.chapter.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .ch-tag{display:inline-block;background:var(--brand-soft);color:var(--brand);font-size:12px;
+    font-weight:700;padding:3px 12px;border-radius:99px;margin-bottom:10px;margin-right:6px}
+  .book-tag{display:inline-block;background:var(--cpp-soft);color:var(--cpp);font-size:12px;
+    font-weight:700;padding:3px 12px;border-radius:99px;margin-bottom:10px}
+  h1{font-size:30px;margin-bottom:6px}
+  h2{font-size:21px;margin:34px 0 12px;padding-left:12px;border-left:4px solid var(--brand)}
+  h3{font-size:16px;margin:22px 0 8px}
+  p{margin:10px 0;color:#374151}
+  .lead{color:var(--muted);font-size:15px}
+  ul,ol{padding-left:24px;color:#374151} li{margin:5px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin:16px 0}
+  .analogy{background:var(--amber-soft);border:1px solid #fde68a;border-radius:var(--radius);padding:16px 20px;margin:16px 0}
+  .analogy b{color:var(--amber)}
+  .tip{background:var(--green-soft);border:1px solid #bbf7d0;border-radius:var(--radius);padding:14px 18px;margin:16px 0;font-size:14px}
+  .tip b{color:var(--green)}
+  .warn{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius);padding:14px 18px;margin:16px 0;font-size:14px}
+  .warn b{color:var(--red)}
+  .cppnote{background:var(--cpp-soft);border:1px solid #ddd6fe;border-radius:var(--radius);padding:14px 18px;margin:16px 0;font-size:14px}
+  .cppnote b{color:var(--cpp)}
+  /* ---------- 代码块 ---------- */
+  .codeblock{background:#fbfcfe;border:1px solid var(--line);border-radius:var(--radius);margin:16px 0;overflow:hidden}
+  .code-head{display:flex;align-items:center;background:var(--code-bg);padding:7px 14px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line)}
+  .dots i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+  .dots i:nth-child(1){background:#fca5a5}.dots i:nth-child(2){background:#fcd34d}.dots i:nth-child(3){background:#86efac}
+  .lang-badge{margin-left:10px;font-size:10.5px;font-weight:800;padding:1px 8px;border-radius:99px}
+  .lang-badge.c{background:#dbeafe;color:#1d4ed8}
+  .lang-badge.cpp{background:#ede9fe;color:#6d28d9}
+  .run-btn{margin-left:auto;background:var(--brand);color:#fff;border:none;padding:4px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600}
+  .run-btn:hover{filter:brightness(1.1)}
+  pre{padding:16px 18px;overflow-x:auto;font-size:14px;font-family:Consolas,"Courier New",monospace;line-height:1.7}
+  .kw{color:var(--code-kw);font-weight:600}.str{color:var(--code-str)}.fn{color:var(--code-fn)}
+  .num{color:var(--code-num)}.cm{color:var(--code-cm);font-style:italic}.ty{color:#0e7490;font-weight:600}
+  .output{background:#111827;color:#e5e7eb;font-family:Consolas,monospace;font-size:13.5px;
+    padding:13px 18px;display:none;white-space:pre-wrap;border-top:1px dashed #374151}
+  .output .lbl{color:#6ee7b7;font-size:11px;display:block;margin-bottom:4px}
+  code.inline{background:var(--code-bg);padding:2px 7px;border-radius:6px;font-family:Consolas,monospace;font-size:13.5px;color:var(--code-fn)}
+  /* ---------- 表格 ---------- */
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;background:var(--card)}
+  th,td{border:1px solid var(--line);padding:9px 13px;text-align:left}
+  th{background:var(--brand-soft);color:var(--brand)}
+  /* ---------- 交互演示 ---------- */
+  .demo{background:linear-gradient(135deg,#f8faff,#f0fdf8);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin:18px 0}
+  .demo-title{font-weight:700;margin-bottom:10px}
+  .var-boxes{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+  .vbox{background:#fff;border:2px solid var(--brand);border-radius:12px;padding:12px 18px;text-align:center;min-width:120px;box-shadow:0 2px 8px rgba(37,99,235,.08)}
+  .vbox .vname{font-family:Consolas,monospace;color:var(--code-kw);font-weight:700;font-size:15px}
+  .vbox .vtype{font-size:11px;color:var(--muted)}
+  .vbox .vval{font-family:Consolas,monospace;font-size:22px;font-weight:800;color:var(--brand);margin-top:4px}
+  input[type=range]{width:100%;accent-color:var(--brand);margin:8px 0}
+  .demo-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+  .demo input[type=text],.demo input[type=number]{border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:14px;width:140px;font-family:Consolas,monospace}
+  .demo button.act{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:8px 18px;cursor:pointer;font-size:14px;font-weight:600}
+  .demo button.act:hover{filter:brightness(1.1)}
+  .loop-step{font-family:Consolas,monospace;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:10px;min-height:56px;font-size:14px;max-height:280px;overflow-y:auto}
+  .branch-box{display:flex;gap:14px;margin-top:10px}
+  .branch{flex:1;background:#fff;border:2px solid var(--line);border-radius:12px;padding:14px;text-align:center;font-size:14px;opacity:.45;transition:.25s}
+  .branch.hit{border-color:var(--green);opacity:1;box-shadow:0 3px 12px rgba(22,163,74,.18);font-weight:700}
+  /* ---------- 测验 ---------- */
+  .quiz{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin:20px 0}
+  .quiz .q{font-weight:700;margin-bottom:12px}
+  .opt{display:block;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 16px;margin:7px 0;cursor:pointer;font-size:14px;transition:.15s}
+  .opt:hover{border-color:var(--brand);background:var(--brand-soft)}
+  .opt.right{border-color:var(--green);background:var(--green-soft);color:var(--green);font-weight:700}
+  .opt.wrong{border-color:var(--red);background:#fef2f2;color:var(--red)}
+  .opt.disabled{pointer-events:none;opacity:.75}
+  .qmsg{font-size:13px;margin-top:8px;min-height:20px}
+  /* ---------- 完成按钮 / 翻页 ---------- */
+  .done-btn{display:block;margin:36px auto 0;background:var(--green);color:#fff;border:none;
+    padding:12px 34px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(22,163,74,.25)}
+  .done-btn:hover{filter:brightness(1.05)}
+  .done-btn.finished{background:#9ca3af;cursor:default;box-shadow:none}
+  .nav-arrows{display:flex;justify-content:space-between;margin-top:26px}
+  .nav-arrows button{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 20px;cursor:pointer;font-size:14px;color:var(--ink)}
+  .nav-arrows button:hover{border-color:var(--brand);color:var(--brand)}
+  /* ---------- 首页 ---------- */
+  .hero{background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:20px;color:#fff;padding:40px 38px;margin-bottom:26px}
+  .hero h1{color:#fff;font-size:30px}
+  .hero p{color:#dbe4ff}
+  .hero .bookline{margin-top:12px;background:rgba(255,255,255,.14);border-radius:10px;padding:9px 16px;font-size:13px;display:inline-block}
+  .path-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:16px}
+  .path-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;cursor:pointer;transition:.2s}
+  .path-card:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.07);border-color:var(--brand)}
+  .path-card .pn{font-size:22px}.path-card h3{margin:6px 0 4px;font-size:15px}.path-card p{font-size:12.5px;color:var(--muted);margin:0}
+  .kbd{background:#e5e7eb;border-radius:6px;padding:1px 8px;font-family:Consolas,monospace;font-size:13px;border-bottom:2px solid #cbd5e1}
+  @media(max-width:860px){
+    aside{position:static;width:100%;height:auto}
+    main{margin-left:0;padding:20px}
+    .wrap{flex-direction:column}
+  }
+</style>
+</head>
+<body class="mode-cpp">
+<div class="wrap">
+
+  <!-- ================= 侧边导航 ================= -->
+  <aside>
+    <div class="logo">🎓 程序设计<span>基础</span></div>
+    <div class="logo-sub">参照《程序设计基础（第4版）》<br>吴文虎 徐明星 邬晓钧 · 清华大学出版社</div>
+    <div class="lang-switch">
+      <button id="btnC" onclick="setLang('c')">C 语言</button>
+      <button id="btnCpp" class="on-cpp" onclick="setLang('cpp')">C++</button>
+    </div>
+    <div class="prog-box">
+      学习进度 <span id="progText">0 / 11</span>
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+    </div>
+    <div id="navList"></div>
+  </aside>
+
+  <!-- ================= 主内容 ================= -->
+  <main id="main"></main>
+</div>
+
+<script>
+/* ==================================================
+   课程内容数据
+   章节体系参照《程序设计基础（第4版）》吴文虎 等
+   清华大学出版社（C/C++ 语言环境）
+================================================== */
+const CHAPTERS = [
+
+/* ============ 第1章 绪论 ============ */
+{
+id:"ch1", icon:"🌱", title:"绪论：走进程序设计", book:"教材第1章",
+html:`
+<span class="ch-tag">第 1 章</span><span class="book-tag">对应教材第 1 章 · 绪论</span>
+<h1>绪论：走进程序设计 🌱</h1>
+<p class="lead">这一章不写代码，先建立最重要的几个观念。</p>
+
+<div class="card">
+<h3>❓ 程序设计到底是什么？</h3>
+<p>程序设计 = <strong>分析问题 → 设计算法（解题思路）→ 用程序设计语言把思路写出来 → 上机实现</strong>。</p>
+<p>教材特别强调：<strong>重点不在背语法，而在"思路、算法、编程构思和程序实现"</strong>——语法只是工具，会思考才是目的。</p>
+</div>
+
+<div class="analogy"><b>🍳 生活比喻：</b>程序就像<strong>菜谱</strong>。<br>
+"打 2 个鸡蛋 → 加一勺盐 → 搅拌 30 秒 → 热油下锅"就是一段程序。<br>
+做菜 = 运行程序；菜谱 = 源代码；想菜谱的过程 = <strong>算法设计</strong>。
+</div>
+
+<h2>为什么用 C / C++ 学程序设计？</h2>
+<p>本教材（也是绝大多数国内高校的选择）以 <strong>C/C++ 语言环境</strong>教学：</p>
+<table>
+<tr><th></th><th>C 语言</th><th>C++</th></tr>
+<tr><td>关系</td><td>1972 年诞生，基础中的基础</td><td>在 C 的基础上扩展而来，完全兼容 C</td></tr>
+<tr><td>输入输出</td><td><code class="inline">scanf / printf</code></td><td><code class="inline">cin / cout</code>（教材默认风格）</td></tr>
+<tr><td>特点</td><td>贴近底层，概念清晰</td><td>更好用：string、vector、引用……</td></tr>
+<tr><td>学习建议</td><td colspan="2" style="text-align:center"><strong>语法九成相同，一起学！</strong>用左侧的开关随时切换对比 👈</td></tr>
+</table>
+
+<div class="tip"><b>💡 本网站的独门设计：</b>所有示例都有 <b>C / C++ 两个版本</b>，点左侧的「C 语言 / C++」开关即可整站切换。建议两种都看看——对比着学，理解会深得多。</div>
+
+<h2>你要准备的工具（教材同款）</h2>
+<ul>
+<li><strong>Dev-C++</strong>：教材第 2 章使用的开发环境，安装即用，机房常见。</li>
+<li><strong>Visual Studio / Visual Studio Code</strong>：更现代的选择，工作以后也用得上。</li>
+<li><strong>在线编译器</strong>：搜"C++ 在线运行"，打开网页就能写，零安装。</li>
+</ul>
+
+<div class="warn"><b>⚠️ 给刚接触电脑的你三个叮嘱：</b>
+<ol>
+<li>编程里所有标点都用<strong>英文半角</strong>（; " ( )），中文标点必报错。</li>
+<li><strong>看懂 ≠ 会写</strong>。每一段示例都要亲手敲一遍并运行。</li>
+<li>报错不是失败，是电脑在教你——第 11 章专门教你怎么看报错。</li>
+</ol></div>
+
+<div class="quiz" data-q="q1">
+<p class="q">教材认为程序设计课程的重点是什么？</p>
+<div class="opt" data-ok="0">背熟所有语法规则</div>
+<div class="opt" data-ok="1">解题思路、算法设计与程序实现</div>
+<div class="opt" data-ok="0">记住所有英文单词</div>
+<div class="qmsg"></div>
+</div>
+`
+},
+
+/* ============ 第2章 编程准备 ============ */
+{
+id:"ch2", icon:"💻", title:"编程准备：第一个程序", book:"教材第2章",
+html:`
+<span class="ch-tag">第 2 章</span><span class="book-tag">对应教材第 2 章 · 编程准备</span>
+<h1>编程准备：第一个程序 💻</h1>
+<p class="lead">教材的第一步：认识开发环境，让电脑开口说话。注意教材默认使用 C++ 的 <code class="inline">cout</code>。</p>
+
+<h2>2.1 第一个程序（对照两种写法）</h2>
+<div class="codeblock lang-c">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>hello.c<span class="lang-badge c">C</span><button class="run-btn" data-out="Hello, World!">▶ 运行</button></div>
+<pre><span class="cm">// 我的第一个 C 程序</span>
+<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>()
+{
+    <span class="fn">printf</span>(<span class="str">"Hello, World!"</span>);
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>hello.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="Hello, World!">▶ 运行</button></div>
+<pre><span class="cm">// 我的第一个 C++ 程序（教材同款写法）</span>
+<span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="kw">int</span> <span class="fn">main</span>()
+{
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"Hello, World!"</span> &lt;&lt; <span class="fn">endl</span>;
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<h2>2.2 逐行翻译成人话</h2>
+<table>
+<tr><th>代码</th><th>人话翻译</th></tr>
+<tr><td><code class="inline">#include &lt;iostream&gt;</code></td><td>"借用输入输出工具箱"——cout 和 cin 住在里面</td></tr>
+<tr><td><code class="inline">using namespace std;</code></td><td>"用标准名字空间"——有了它才能直接写 cout，否则要写 std::cout</td></tr>
+<tr><td><code class="inline">int main()</code></td><td>程序的<strong>大门口</strong>，每个程序从这里开始执行</td></tr>
+<tr><td><code class="inline">cout &lt;&lt; "..." &lt;&lt; endl;</code></td><td>把内容<strong>送</strong>到屏幕：<code class="inline">&lt;&lt;</code> 像传送带，<code class="inline">endl</code> 表示换行</td></tr>
+<tr><td><code class="inline">return 0;</code></td><td>"报告老板：任务顺利完成"</td></tr>
+</table>
+
+<h2>2.3 输出流对象 cout（教材 2.3 节）</h2>
+<p>cout 可以像糖葫芦一样串着输出多项内容：</p>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>cout.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="我18岁，身高1.75米
+3 + 5 = 8">▶ 运行</button></div>
+<pre><span class="kw">int</span> age = <span class="num">18</span>;
+<span class="kw">double</span> h = <span class="num">1.75</span>;
+<span class="fn">cout</span> &lt;&lt; <span class="str">"我"</span> &lt;&lt; age &lt;&lt; <span class="str">"岁，身高"</span> &lt;&lt; h &lt;&lt; <span class="str">"米"</span> &lt;&lt; <span class="fn">endl</span>;
+<span class="fn">cout</span> &lt;&lt; <span class="str">"3 + 5 = "</span> &lt;&lt; <span class="num">3</span> + <span class="num">5</span> &lt;&lt; <span class="fn">endl</span>;   <span class="cm">// 可以直接算！</span></pre>
+<div class="output"></div>
+</div>
+<div class="codeblock lang-c">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>printf.c<span class="lang-badge c">C</span><button class="run-btn" data-out="我18岁，身高1.75米
+3 + 5 = 8">▶ 运行</button></div>
+<pre><span class="kw">int</span> age = <span class="num">18</span>;
+<span class="kw">double</span> h = <span class="num">1.75</span>;
+<span class="fn">printf</span>(<span class="str">"我%d岁，身高%.2f米\\n"</span>, age, h);
+<span class="fn">printf</span>(<span class="str">"3 + 5 = %d\\n"</span>, <span class="num">3</span> + <span class="num">5</span>);</pre>
+<div class="output"></div>
+</div>
+
+<div class="cppnote"><b>⚡ C++ 方便在哪？</b>printf 要记住 %d、%f、%c 这些占位符；而 <code class="inline">cout</code> 不用——不管什么类型，用 <code class="inline">&lt;&lt;</code> 串起来就行，它会自动识别。这也是教材选用 cout 教学的原因。</div>
+
+<h2>2.4 程序注释（教材 2.4 节）</h2>
+<ul>
+<li><code class="inline">// 单行注释</code> —— 从 // 到行尾都是给人看的说明，电脑直接忽略。</li>
+<li><code class="inline">/* 多行注释 */</code> —— 可以跨越多行。</li>
+</ul>
+
+<h2>2.5 算术运算符与数学函数（教材 2.5、2.6 节）</h2>
+<table>
+<tr><th>运算符</th><th>含义</th><th>例子</th><th>结果</th></tr>
+<tr><td><code class="inline">+ - * /</code></td><td>四则运算</td><td><code class="inline">7 / 2</code></td><td>3（整数除法，丢掉小数！）</td></tr>
+<tr><td><code class="inline">%</code></td><td>取余数</td><td><code class="inline">7 % 2</code></td><td>1</td></tr>
+<tr><td><code class="inline">7.0 / 2</code></td><td>小数除法</td><td>—</td><td>3.5</td></tr>
+</table>
+<p>常用数学函数（需 <code class="inline">#include &lt;cmath&gt;</code>）：<code class="inline">sqrt(x)</code> 开平方、<code class="inline">pow(x,y)</code> x 的 y 次方、<code class="inline">fabs(x)</code> 绝对值。</p>
+
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>math.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="sqrt(16) = 4
+2 的 10 次方 = 1024
+7 % 3 = 1">▶ 运行</button></div>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;cmath&gt;</span>       <span class="cm">// 数学函数工具箱</span>
+<span class="kw">using namespace</span> std;
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"sqrt(16) = "</span> &lt;&lt; <span class="fn">sqrt</span>(<span class="num">16</span>) &lt;&lt; <span class="fn">endl</span>;
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"2 的 10 次方 = "</span> &lt;&lt; <span class="fn">pow</span>(<span class="num">2</span>, <span class="num">10</span>) &lt;&lt; <span class="fn">endl</span>;
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"7 % 3 = "</span> &lt;&lt; <span class="num">7</span> % <span class="num">3</span> &lt;&lt; <span class="fn">endl</span>;
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<div class="quiz" data-q="q2">
+<p class="q">C++ 中把内容输出到屏幕，使用的是？</p>
+<div class="opt" data-ok="1">cout &lt;&lt; 内容</div>
+<div class="opt" data-ok="0">cin &gt;&gt; 内容</div>
+<div class="opt" data-ok="0">print(内容)</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q3">
+<p class="q">表达式 9 / 2（两个整数相除）的结果是？</p>
+<div class="opt" data-ok="0">4.5</div>
+<div class="opt" data-ok="1">4</div>
+<div class="opt" data-ok="0">5</div>
+<div class="qmsg"></div>
+</div>
+`
+},
+
+/* ============ 第3章 代数思维 ============ */
+{
+id:"ch3", icon:"📦", title:"代数思维：变量与赋值", book:"教材第3章",
+html:`
+<span class="ch-tag">第 3 章</span><span class="book-tag">对应教材第 3 章 · 代数思维与计算机解题</span>
+<h1>代数思维：变量与赋值 📦</h1>
+<p class="lead">教材把"变量、赋值"称为<strong>代数思维</strong>——用字母代替数，让计算机按公式解题。</p>
+
+<h2>3.1 变量：贴标签的盒子</h2>
+<div class="analogy"><b>🗄️ 生活比喻：</b>变量就是一个<strong>贴了标签的盒子</strong>。<br>
+盒子上写名字（变量名），盒子里装东西（值），盒子的尺寸决定能装什么（类型）。<br>
+<code class="inline">int age = 18;</code>：拿一个装整数的盒子，贴上 age 标签，放进 18。</div>
+
+<h2>3.2 常用数据类型（教材 3.2 节）</h2>
+<table>
+<tr><th>类型</th><th>装什么</th><th>例子</th><th>生活类比</th></tr>
+<tr><td><code class="inline">int</code></td><td>整数</td><td>18, -5, 2026</td><td>人数、年龄、分数</td></tr>
+<tr><td><code class="inline">double / float</code></td><td>小数（浮点数）</td><td>3.14, 59.5</td><td>身高、体重、价格</td></tr>
+<tr><td><code class="inline">char</code></td><td>单个字符</td><td>'A', '男'</td><td>等级、性别标记</td></tr>
+<tr><td><code class="inline">bool</code>（C++）</td><td>真 / 假</td><td>true, false</td><td>开关、是非题</td></tr>
+<tr><td><code class="inline">string</code>（C++）</td><td>一串文字</td><td>"小明"</td><td>姓名、句子</td></tr>
+</table>
+
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>var.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="我叫小华，今年18岁，身高1.75米，等级A">▶ 运行</button></div>
+<pre><span class="kw">string</span> name = <span class="str">"小华"</span>;   <span class="cm">// string 是 C++ 特有的"文字盒子"</span>
+<span class="kw">int</span> age = <span class="num">18</span>;
+<span class="kw">double</span> height = <span class="num">1.75</span>;
+<span class="kw">char</span> grade = <span class="str">'A'</span>;
+
+<span class="fn">cout</span> &lt;&lt; <span class="str">"我叫"</span> &lt;&lt; name &lt;&lt; <span class="str">"，今年"</span> &lt;&lt; age &lt;&lt; <span class="str">"岁，身高"</span>
+     &lt;&lt; height &lt;&lt; <span class="str">"米，等级"</span> &lt;&lt; grade &lt;&lt; <span class="fn">endl</span>;</pre>
+<div class="output"></div>
+</div>
+<div class="codeblock lang-c">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>var.c<span class="lang-badge c">C</span><button class="run-btn" data-out="今年18岁，身高1.75米，等级A">▶ 运行</button></div>
+<pre><span class="kw">int</span> age = <span class="num">18</span>;
+<span class="kw">double</span> height = <span class="num">1.75</span>;
+<span class="kw">char</span> grade = <span class="str">'A'</span>;
+
+<span class="fn">printf</span>(<span class="str">"今年%d岁，身高%.2f米，等级%c\\n"</span>, age, height, grade);</pre>
+<div class="output"></div>
+</div>
+
+<h2>3.3 变量赋值的 5 要素（教材 3.4.2 节）</h2>
+<div class="card">
+<p>教材总结：一个赋值动作要想清楚 5 件事——</p>
+<ol>
+<li><strong>变量名</strong>：放到哪个盒子？（age）</li>
+<li><strong>类型</strong>：盒子是什么尺寸？（int）</li>
+<li><strong>值</strong>：放进去的东西是什么？（18）</li>
+<li><strong>方向</strong>：<code class="inline">=</code> 永远是"右边的值 → 左边的盒子"</li>
+<li><strong>时机</strong>：旧的值会被<strong>覆盖</strong>，一去不回</li>
+</ol>
+</div>
+
+<div class="warn"><b>⚠️ 注意：</b><code class="inline">=</code> 不是数学里的"等于"，而是"<strong>把右边的值放进左边的盒子</strong>"。所以 <code class="inline">money = money - 450;</code> 完全合法——先算右边，再存回左边。</div>
+
+<h2>🎮 动手试试：给盒子装东西</h2>
+<div class="demo">
+<div class="demo-title">变量演示器 —— 输入值，看盒子的变化</div>
+<div class="demo-row">
+你的名字：<input type="text" id="vName" value="小明" maxlength="6">
+年龄：<input type="number" id="vAge" value="18" style="width:90px">
+<button class="act" onclick="varDemo()">装进盒子！</button>
+</div>
+<div class="var-boxes">
+<div class="vbox"><div class="vtype">string（文字）</div><div class="vname">name</div><div class="vval" id="boxName">小明</div></div>
+<div class="vbox"><div class="vtype">int（整数）</div><div class="vname">age</div><div class="vval" id="boxAge">18</div></div>
+</div>
+<div class="loop-step" id="varOut">// 点上面的按钮，看看输出了什么</div>
+</div>
+
+<h2>3.4 变量是可以变的</h2>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>change.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="开学时零花钱：500
+双十一后零花钱：50">▶ 运行</button></div>
+<pre><span class="kw">int</span> money = <span class="num">500</span>;
+<span class="fn">cout</span> &lt;&lt; <span class="str">"开学时零花钱："</span> &lt;&lt; money &lt;&lt; <span class="fn">endl</span>;
+
+money = money - <span class="num">450</span>;   <span class="cm">// 旧值减 450，再放回盒子（旧值被覆盖）</span>
+<span class="fn">cout</span> &lt;&lt; <span class="str">"双十一后零花钱："</span> &lt;&lt; money &lt;&lt; <span class="fn">endl</span>;</pre>
+<div class="output"></div>
+</div>
+
+<h2>3.5 指针变量（教材 3.5 节 · 初步认识）</h2>
+<p>教材在第 3 章就安排了指针——别怕，先记住一句话：</p>
+<div class="analogy"><b>📬 指针 = 存"门牌号"的盒子。</b><br>
+普通变量装的是"东西"，指针变量装的是"<strong>另一个盒子的地址</strong>"。<br>
+<code class="inline">int *p = &age;</code>：p 里存的是 age 这个盒子的门牌号；<code class="inline">*p</code> 表示"按门牌号找到那个盒子里的东西"。</div>
+
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>pointer.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="age 的值：18
+p 里存的地址：0x7ffde24（每次运行不同）
+*p 按地址取值：18">▶ 运行</button></div>
+<pre><span class="kw">int</span> age = <span class="num">18</span>;
+<span class="kw">int</span> *p = &age;      <span class="cm">// & 取地址：拿到 age 的门牌号</span>
+
+<span class="fn">cout</span> &lt;&lt; <span class="str">"age 的值："</span> &lt;&lt; age &lt;&lt; <span class="fn">endl</span>;
+<span class="fn">cout</span> &lt;&lt; <span class="str">"p 里存的地址："</span> &lt;&lt; p &lt;&lt; <span class="fn">endl</span>;
+<span class="fn">cout</span> &lt;&lt; <span class="str">"*p 按地址取值："</span> &lt;&lt; *p &lt;&lt; <span class="fn">endl</span>;  <span class="cm">// * 间接访问</span></pre>
+<div class="output"></div>
+</div>
+
+<div class="tip"><b>💡 现在只需混个脸熟：</b>指针是 C/C++ 的"硬骨头"，教材后面还会反复用到。现在能分清 <code class="inline">&</code>（取地址）和 <code class="inline">*</code>（按地址取值）就是胜利。</div>
+
+<div class="quiz" data-q="q4">
+<p class="q">想存"59.5 分"这个成绩，应该用哪种类型？</p>
+<div class="opt" data-ok="0">int</div>
+<div class="opt" data-ok="1">double</div>
+<div class="opt" data-ok="0">char</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q5">
+<p class="q">执行 int a = 5; a = a + 3; 之后，a 的值是多少？</p>
+<div class="opt" data-ok="0">5</div>
+<div class="opt" data-ok="0">3</div>
+<div class="opt" data-ok="1">8</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q6">
+<p class="q">int *p = &amp;age; 中 p 里面装的是？</p>
+<div class="opt" data-ok="0">age 的值</div>
+<div class="opt" data-ok="1">age 在内存中的地址</div>
+<div class="opt" data-ok="0">一个随机数</div>
+<div class="qmsg"></div>
+</div>
+`
+},
+
+/* ============ 第4章 逻辑思维 ============ */
+{
+id:"ch4", icon:"🔀", title:"逻辑思维：分支与循环", book:"教材第4章",
+html:`
+<span class="ch-tag">第 4 章</span><span class="book-tag">对应教材第 4 章 · 逻辑思维与计算机解题</span>
+<h1>逻辑思维：分支与循环 🔀</h1>
+<p class="lead">"如果……就……"和"重复做"——程序逻辑的两根支柱，加上输入，程序就活起来了。</p>
+
+<h2>4.0 先学会"听"：输入（cin / scanf）</h2>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>cin.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="请输入你的年龄：19
+哇，你19岁了，年轻真好！">▶ 运行（模拟输入19）</button></div>
+<pre><span class="kw">int</span> age;
+<span class="fn">cout</span> &lt;&lt; <span class="str">"请输入你的年龄："</span>;
+<span class="fn">cin</span> &gt;&gt; age;      <span class="cm">// 方向符号 >> 把键盘输入"流"进变量</span>
+<span class="fn">cout</span> &lt;&lt; <span class="str">"哇，你"</span> &lt;&lt; age &lt;&lt; <span class="str">"岁了，年轻真好！"</span> &lt;&lt; <span class="fn">endl</span>;</pre>
+<div class="output"></div>
+</div>
+<div class="codeblock lang-c">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>scanf.c<span class="lang-badge c">C</span><button class="run-btn" data-out="请输入你的年龄：19
+哇，你19岁了，年轻真好！">▶ 运行（模拟输入19）</button></div>
+<pre><span class="kw">int</span> age;
+<span class="fn">printf</span>(<span class="str">"请输入你的年龄："</span>);
+<span class="fn">scanf</span>(<span class="str">"%d"</span>, <span class="kw">&amp;</span>age);   <span class="cm">// C 语言要写 & 告诉它变量地址！</span>
+<span class="fn">printf</span>(<span class="str">"哇，你%d岁了，年轻真好！\\n"</span>, age);</pre>
+<div class="output"></div>
+</div>
+
+<div class="cppnote"><b>⚡ 又一个 C++ 更省心的地方：</b>C 的 scanf 必须写 <code class="inline">&age</code>（取地址），忘了就程序崩溃；C++ 的 <code class="inline">cin &gt;&gt; age</code> 不用写 &，直接读进变量。</div>
+
+<h2>4.1 关系运算（教材 4.1 节）</h2>
+<table>
+<tr><th>符号</th><th>意思</th><th>例子（a=5, b=8）</th></tr>
+<tr><td><code class="inline">&gt;</code> <code class="inline">&lt;</code></td><td>大于 / 小于</td><td>a &lt; b → 真</td></tr>
+<tr><td><code class="inline">&gt;=</code> <code class="inline">&lt;=</code></td><td>大于等于 / 小于等于</td><td>a &gt;= 5 → 真</td></tr>
+<tr><td><code class="inline">==</code></td><td>等于（两个等号！）</td><td>a == 5 → 真</td></tr>
+<tr><td><code class="inline">!=</code></td><td>不等于</td><td>a != b → 真</td></tr>
+</table>
+<div class="warn"><b>⚠️ 全体新生都会犯的错：</b>把 <code class="inline">if (a == 5)</code> 写成 <code class="inline">if (a = 5)</code>！一个等号是赋值，两个等号才是比较。</div>
+
+<h2>4.2 分支结构（教材 4.4 节）</h2>
+<div class="analogy"><b>☔ 生活比喻：</b>"<strong>如果</strong>明天下雨，<strong>就</strong>带伞；<strong>否则</strong>就不带。"——这就是 if...else。</div>
+
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>if.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="等级：良好">▶ 运行（score=85）</button></div>
+<pre><span class="kw">int</span> score = <span class="num">85</span>;
+
+<span class="kw">if</span> (score &gt;= <span class="num">90</span>)      <span class="fn">cout</span> &lt;&lt; <span class="str">"等级：优秀"</span> &lt;&lt; <span class="fn">endl</span>;
+<span class="kw">else if</span> (score &gt;= <span class="num">80</span>) <span class="fn">cout</span> &lt;&lt; <span class="str">"等级：良好"</span> &lt;&lt; <span class="fn">endl</span>;
+<span class="kw">else if</span> (score &gt;= <span class="num">60</span>) <span class="fn">cout</span> &lt;&lt; <span class="str">"等级：及格"</span> &lt;&lt; <span class="fn">endl</span>;
+<span class="kw">else</span>                   <span class="fn">cout</span> &lt;&lt; <span class="str">"等级：不及格"</span> &lt;&lt; <span class="fn">endl</span>;</pre>
+<div class="output"></div>
+</div>
+
+<h2>🎮 动手试试：拖动滑块，看程序走哪条路</h2>
+<div class="demo">
+<div class="demo-title">成绩判断模拟器</div>
+<div class="demo-row">考试分数：<b id="scoreVal" style="font-size:20px;color:var(--brand)">85</b> 分</div>
+<input type="range" min="0" max="100" value="85" oninput="ifDemo(this.value)">
+<div class="branch-box">
+<div class="branch" id="br1">score &gt;= 90<br>🏆 优秀</div>
+<div class="branch" id="br2">score &gt;= 80<br>🎉 良好</div>
+<div class="branch" id="br3">score &gt;= 60<br>😊 及格</div>
+<div class="branch" id="br4">其他<br>😢 不及格</div>
+</div>
+</div>
+
+<h2>4.3 循环结构（教材 4.3 节）</h2>
+<div class="analogy"><b>🏃 生活比喻：</b>体育老师说"绕操场跑 5 圈"。你不会分别下 5 次命令，而是一句话搞定——这就是循环。</div>
+
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>for.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="第 1 圈
+第 2 圈
+第 3 圈
+第 4 圈
+第 5 圈">▶ 运行</button></div>
+<pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">5</span>; i++) {
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"第 "</span> &lt;&lt; i &lt;&lt; <span class="str">" 圈"</span> &lt;&lt; <span class="fn">endl</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<p>for 括号里的三个部分，就是"跑步计划"：<code class="inline">int i = 1</code>（起点）→ <code class="inline">i &lt;= 5</code>（终点）→ <code class="inline">i++</code>（每圈加 1）。</p>
+
+<h2>🎮 循环动画演示</h2>
+<div class="demo">
+<div class="demo-title">看看计算机到底"怎么想"的</div>
+<div class="demo-row">循环次数 N = <input type="number" id="loopN" value="5" min="1" max="10" style="width:70px">
+<button class="act" onclick="loopDemo()">▶ 一步步执行</button></div>
+<div class="loop-step" id="loopOut">// 点击按钮，逐帧观察 i 的变化</div>
+</div>
+
+<h2>4.4 经典必考：1+2+...+100（两种循环对照）</h2>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>sum.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="1 加到 100 = 5050">▶ 运行</button></div>
+<pre><span class="kw">int</span> sum = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">100</span>; i++) {
+    sum = sum + i;   <span class="cm">// 把每个 i 累加进 sum</span>
+}
+<span class="fn">cout</span> &lt;&lt; <span class="str">"1 加到 100 = "</span> &lt;&lt; sum &lt;&lt; <span class="fn">endl</span>;</pre>
+<div class="output"></div>
+</div>
+
+<h2>4.5 逻辑运算与枚举法（教材 4.2、4.7 节）</h2>
+<table>
+<tr><th>符号</th><th>意思</th><th>例子</th></tr>
+<tr><td><code class="inline">&amp;&amp;</code></td><td>并且（两个都真才真）</td><td><code class="inline">age&gt;=18 &amp;&amp; hasID</code> 成年且有身份证</td></tr>
+<tr><td><code class="inline">||</code></td><td>或者（一个真就真）</td><td><code class="inline">day==6 || day==7</code> 是周末</td></tr>
+<tr><td><code class="inline">!</code></td><td>取反</td><td><code class="inline">!raining</code> 没下雨</td></tr>
+</table>
+<div class="card"><b>🧩 枚举法的思路（教材 4.2 节）：</b>遇到"哪些数满足条件"的问题，就让循环把候选答案<strong>一个个试过去</strong>，满足条件就输出。例：找出 1~100 中所有"能被 3 整除或能被 5 整除"的数——<code class="inline">if (i%3==0 || i%5==0)</code>。计算机不怕试，这正是它的主场！</div>
+
+<div class="warn"><b>⚠️ 死循环警告：</b>如果条件永远成立（比如忘了写 <code class="inline">i++</code>），程序就会永远转下去。卡死时按 <span class="kbd">Ctrl</span> + <span class="kbd">C</span> 终止。</div>
+
+<div class="quiz" data-q="q7">
+<p class="q">判断 x 是否等于 10，正确的写法是？</p>
+<div class="opt" data-ok="0">if (x = 10)</div>
+<div class="opt" data-ok="1">if (x == 10)</div>
+<div class="opt" data-ok="0">if (x := 10)</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q8">
+<p class="q">for (int i = 1; i &lt;= 3; i++) 循环体一共执行几次？</p>
+<div class="opt" data-ok="0">2 次</div>
+<div class="opt" data-ok="1">3 次</div>
+<div class="opt" data-ok="0">4 次</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q9">
+<p class="q">要表达"18 到 60 岁之间（含两端）"，正确的条件是？</p>
+<div class="opt" data-ok="1">age &gt;= 18 &amp;&amp; age &lt;= 60</div>
+<div class="opt" data-ok="0">age &gt;= 18 || age &lt;= 60</div>
+<div class="opt" data-ok="0">18 &lt;= age &lt;= 60</div>
+<div class="qmsg"></div>
+</div>
+`
+},
+
+/* ============ 第5章 函数 ============ */
+{
+id:"ch5", icon:"🧰", title:"函数思维与模块化设计", book:"教材第5章",
+html:`
+<span class="ch-tag">第 5 章</span><span class="book-tag">对应教材第 5 章 · 函数思维与模块化设计</span>
+<h1>函数思维与模块化设计 🧰</h1>
+<p class="lead">把一个大问题拆成若干小功能，每个小功能写成一个函数——这就是"模块化设计"。</p>
+
+<div class="analogy"><b>🥤 生活比喻：</b>函数就是<strong>奶茶店的点单机</strong>：你递进去"珍珠奶茶、少糖"（<strong>实在参数</strong>），机器按配方（<strong>形式参数</strong>）做好，从窗口递出一杯奶茶（<strong>返回值</strong>）。你不用知道机器内部怎么摇，会用就行。</div>
+
+<h2>5.1 自己造一台小机器（教材 5.1 节）</h2>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>func.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="3 + 5 = 8
+100 + 200 = 300">▶ 运行</button></div>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="cm">// 函数定义：吃进两个整数，吐出一个整数</span>
+<span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {      <span class="cm">// a、b 是形式参数（配方）</span>
+    <span class="kw">return</span> a + b;
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> x = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">5</span>);          <span class="cm">// 3、5 是实在参数（原料）</span>
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"3 + 5 = "</span> &lt;&lt; x &lt;&lt; <span class="fn">endl</span>;
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"100 + 200 = "</span> &lt;&lt; <span class="fn">add</span>(<span class="num">100</span>, <span class="num">200</span>) &lt;&lt; <span class="fn">endl</span>;
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<table>
+<tr><th>零件</th><th>作用</th><th>例子里的谁</th></tr>
+<tr><td>返回类型</td><td>机器吐出来的东西是什么类型</td><td><code class="inline">int</code></td></tr>
+<tr><td>函数名</td><td>机器的名字</td><td><code class="inline">add</code></td></tr>
+<tr><td>形式参数</td><td>配方里的"空位"</td><td><code class="inline">int a, int b</code></td></tr>
+<tr><td>实在参数</td><td>调用时真正递进去的原料</td><td><code class="inline">3, 5</code></td></tr>
+<tr><td>return</td><td>把成品递出窗口</td><td><code class="inline">return a + b;</code></td></tr>
+</table>
+
+<h2>🎮 动手试试：调用"找最大值机器"</h2>
+<div class="demo">
+<div class="demo-title">int max(int a, int b) —— 返回较大的那个数</div>
+<div class="demo-row">
+a = <input type="number" id="fa" value="37" style="width:80px">
+b = <input type="number" id="fb" value="52" style="width:80px">
+<button class="act" onclick="funcDemo()">调用 max(a, b)</button>
+</div>
+<div class="loop-step" id="funcOut">// 点按钮，看机器返回了什么</div>
+</div>
+
+<h2>5.2 参数传递方式（教材 5.4 节 · 重点！）</h2>
+<p>教材专门比较了几种参数传递方式。核心问题：<strong>函数里改参数，函数外跟着变吗？</strong></p>
+
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>ref.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="值传递后：x = 10（没变！）
+引用传递后：y = 99（变了！）">▶ 运行</button></div>
+<pre><span class="cm">// 值传递：函数拿到的是"复印件"，改不影响原件</span>
+<span class="kw">void</span> <span class="fn">changeByValue</span>(<span class="kw">int</span> a) { a = <span class="num">99</span>; }
+
+<span class="cm">// 引用传递（C++ 特有）：int& 表示"就是原件本人"</span>
+<span class="kw">void</span> <span class="fn">changeByRef</span>(<span class="kw">int</span> &amp;a) { a = <span class="num">99</span>; }
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> x = <span class="num">10</span>, y = <span class="num">10</span>;
+    <span class="fn">changeByValue</span>(x);
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"值传递后：x = "</span> &lt;&lt; x &lt;&lt; <span class="str">"（没变！）"</span> &lt;&lt; <span class="fn">endl</span>;
+    <span class="fn">changeByRef</span>(y);
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"引用传递后：y = "</span> &lt;&lt; y &lt;&lt; <span class="str">"（变了！）"</span> &lt;&lt; <span class="fn">endl</span>;
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+<div class="codeblock lang-c">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>ptr.c<span class="lang-badge c">C</span><button class="run-btn" data-out="值传递后：x = 10（没变！）
+指针传递后：y = 99（变了！）">▶ 运行</button></div>
+<pre><span class="cm">// C 语言没有引用，用指针达到同样效果</span>
+<span class="kw">void</span> <span class="fn">changeByValue</span>(<span class="kw">int</span> a) { a = <span class="num">99</span>; }
+<span class="kw">void</span> <span class="fn">changeByPtr</span>(<span class="kw">int</span> *p) { *p = <span class="num">99</span>; }   <span class="cm">// 按地址改原件</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> x = <span class="num">10</span>, y = <span class="num">10</span>;
+    <span class="fn">changeByValue</span>(x);
+    <span class="fn">printf</span>(<span class="str">"值传递后：x = %d（没变！）\\n"</span>, x);
+    <span class="fn">changeByPtr</span>(&amp;y);                       <span class="cm">// 传入 y 的地址</span>
+    <span class="fn">printf</span>(<span class="str">"指针传递后：y = %d（变了！）\\n"</span>, y);
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<div class="cppnote"><b>⚡ C++ 的引用（&amp;）：</b>可以把它理解为给变量起"别名"——<code class="inline">int &amp;a = y;</code> 之后，a 和 y 就是同一个盒子的两个名字，改 a 就是改 y。比 C 的指针写法更直观、更安全。</div>
+
+<h2>5.3 函数重载（C++ 彩蛋）</h2>
+<p>C++ 允许<strong>同名函数</strong>根据不同参数自动选择，C 语言做不到：</p>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>overload.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="max(3, 5) = 5
+max(3.14, 2.71) = 3.14">▶ 运行</button></div>
+<pre><span class="kw">int</span> <span class="fn">max</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) { <span class="kw">return</span> a &gt; b ? a : b; }
+<span class="kw">double</span> <span class="fn">max</span>(<span class="kw">double</span> a, <span class="kw">double</span> b) { <span class="kw">return</span> a &gt; b ? a : b; }  <span class="cm">// 同名！</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"max(3, 5) = "</span> &lt;&lt; <span class="fn">max</span>(<span class="num">3</span>, <span class="num">5</span>) &lt;&lt; <span class="fn">endl</span>;          <span class="cm">// 自动选 int 版</span>
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"max(3.14, 2.71) = "</span> &lt;&lt; <span class="fn">max</span>(<span class="num">3.14</span>, <span class="num">2.71</span>) &lt;&lt; <span class="fn">endl</span>; <span class="cm">// 自动选 double 版</span>
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<div class="quiz" data-q="q10">
+<p class="q">函数里把结果"递出窗口"的关键字是？</p>
+<div class="opt" data-ok="0">printf / cout</div>
+<div class="opt" data-ok="1">return</div>
+<div class="opt" data-ok="0">scanf / cin</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q11">
+<p class="q">希望函数里修改参数能影响外面的变量，C++ 里最简洁的写法是？</p>
+<div class="opt" data-ok="0">void f(int a)</div>
+<div class="opt" data-ok="1">void f(int &amp;a)</div>
+<div class="opt" data-ok="0">void f(a int)</div>
+<div class="qmsg"></div>
+</div>
+`
+},
+
+/* ============ 第6章 数组 ============ */
+{
+id:"ch6", icon:"🗃️", title:"数据的组织①：数组", book:"教材第6章",
+html:`
+<span class="ch-tag">第 6 章</span><span class="book-tag">对应教材第 6 章 · 数据的组织与处理（1）数组</span>
+<h1>数据的组织①：数组 🗃️</h1>
+<p class="lead">一个班 40 个人的成绩，总不能起 40 个变量名——批量数据，交给数组。</p>
+
+<div class="analogy"><b>🏨 生活比喻：</b>数组就是<strong>酒店的一层楼</strong>：楼有名字（数组名），每个房间有门牌号（下标），房间都长一样（同类型）。<br>但注意：<strong>程序员从 0 开始数房间</strong>——第一个房间是 0 号！</div>
+
+<h2>6.1 定义与遍历（教材 6.1 节）</h2>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>array.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="第 1 位同学：78 分
+第 2 位同学：92 分
+第 3 位同学：85 分
+第 4 位同学：60 分
+第 5 位同学：99 分">▶ 运行</button></div>
+<pre><span class="kw">int</span> score[<span class="num">5</span>] = {<span class="num">78</span>, <span class="num">92</span>, <span class="num">85</span>, <span class="num">60</span>, <span class="num">99</span>};
+
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++) {
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"第 "</span> &lt;&lt; i + <span class="num">1</span> &lt;&lt; <span class="str">" 位同学："</span> &lt;&lt; score[i] &lt;&lt; <span class="str">" 分"</span> &lt;&lt; <span class="fn">endl</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<div class="demo">
+<div class="demo-title">📦 数组在内存里的样子（score[5]）</div>
+<div class="var-boxes" style="gap:8px">
+<div class="vbox" style="min-width:90px"><div class="vtype">score[0]</div><div class="vval">78</div></div>
+<div class="vbox" style="min-width:90px"><div class="vtype">score[1]</div><div class="vval">92</div></div>
+<div class="vbox" style="min-width:90px"><div class="vtype">score[2]</div><div class="vval">85</div></div>
+<div class="vbox" style="min-width:90px"><div class="vtype">score[3]</div><div class="vval">60</div></div>
+<div class="vbox" style="min-width:90px"><div class="vtype">score[4]</div><div class="vval">99</div></div>
+</div>
+<p style="font-size:13px;color:var(--muted)">门牌号从 0 开始，5 个房间的最后一个号码是 4，不是 5。访问 <b>score[5]</b> 就是"下标越界"！</p>
+</div>
+
+<h2>6.2 教材经典算法①：冒泡排序（教材 6.4 节）</h2>
+<p>相邻两个比较，大的往后"冒泡"，一趟下来最大的沉到最后：</p>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>bubble.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="排序前：78 92 85 60 99
+排序后：60 78 85 92 99">▶ 运行</button></div>
+<pre><span class="kw">int</span> a[<span class="num">5</span>] = {<span class="num">78</span>, <span class="num">92</span>, <span class="num">85</span>, <span class="num">60</span>, <span class="num">99</span>};
+
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">4</span>; i++)          <span class="cm">// 共比较 4 趟</span>
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j &lt; <span class="num">4</span> - i; j++)   <span class="cm">// 每趟两两比较</span>
+        <span class="kw">if</span> (a[j] &gt; a[j+<span class="num">1</span>]) {          <span class="cm">// 前大后小就交换</span>
+            <span class="kw">int</span> t = a[j]; a[j] = a[j+<span class="num">1</span>]; a[j+<span class="num">1</span>] = t;
+        }</pre>
+<div class="output"></div>
+</div>
+
+<h2>🎮 冒泡排序动画</h2>
+<div class="demo">
+<div class="demo-title">点按钮，看每一趟怎么"冒泡"</div>
+<div class="demo-row"><button class="act" onclick="bubbleDemo()">▶ 演示一趟</button>
+<span style="font-size:13px;color:var(--muted)" id="bubbleInfo"></span></div>
+<div class="var-boxes" id="bubbleBoxes" style="gap:8px"></div>
+</div>
+
+<h2>6.3 教材经典算法②：折半查找（教材 6.3 节）</h2>
+<div class="analogy"><b>📖 查字典比喻：</b>在<strong>排好序</strong>的数组里找数，不用一个个翻——每次翻中间，大了去后半，小了去前半，一次砍一半。1000 个数最多找 10 次！</div>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>binary.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="找到 85，下标是 3">▶ 运行</button></div>
+<pre><span class="kw">int</span> a[<span class="num">7</span>] = {<span class="num">10</span>, <span class="num">25</span>, <span class="num">60</span>, <span class="num">85</span>, <span class="num">90</span>, <span class="num">92</span>, <span class="num">99</span>};  <span class="cm">// 必须有序！</span>
+<span class="kw">int</span> key = <span class="num">85</span>, lo = <span class="num">0</span>, hi = <span class="num">6</span>;
+
+<span class="kw">while</span> (lo &lt;= hi) {
+    <span class="kw">int</span> mid = (lo + hi) / <span class="num">2</span>;
+    <span class="kw">if</span> (a[mid] == key) {
+        <span class="fn">cout</span> &lt;&lt; <span class="str">"找到 "</span> &lt;&lt; key &lt;&lt; <span class="str">"，下标是 "</span> &lt;&lt; mid &lt;&lt; <span class="fn">endl</span>;
+        <span class="kw">break</span>;
+    }
+    <span class="kw">else if</span> (a[mid] &lt; key) lo = mid + <span class="num">1</span>;  <span class="cm">// 去右半</span>
+    <span class="kw">else</span>                     hi = mid - <span class="num">1</span>;  <span class="cm">// 去左半</span>
+}</pre>
+<div class="output"></div>
+</div>
+
+<h2>6.4 二维数组（教材 6.8 节）</h2>
+<div class="analogy"><b>🎬 电影院比喻：</b>二维数组 = 座位表，<code class="inline">a[2][3]</code> 就是"第 2 排第 3 座"（同样从 0 排 0 座开始数）。</div>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>2d.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="90 80 70
+60 95 85
+第 2 排第 3 个成绩：85">▶ 运行</button></div>
+<pre><span class="cm">// 2 个班 × 3 个人的成绩表</span>
+<span class="kw">int</span> a[<span class="num">2</span>][<span class="num">3</span>] = { {<span class="num">90</span>, <span class="num">80</span>, <span class="num">70</span>}, {<span class="num">60</span>, <span class="num">95</span>, <span class="num">85</span>} };
+
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">2</span>; i++) {
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j &lt; <span class="num">3</span>; j++)
+        <span class="fn">cout</span> &lt;&lt; a[i][j] &lt;&lt; <span class="str">" "</span>;
+    <span class="fn">cout</span> &lt;&lt; <span class="fn">endl</span>;
+}
+<span class="fn">cout</span> &lt;&lt; <span class="str">"第 2 排第 3 个成绩："</span> &lt;&lt; a[<span class="num">1</span>][<span class="num">2</span>] &lt;&lt; <span class="fn">endl</span>;</pre>
+<div class="output"></div>
+</div>
+
+<h2>6.5 C++ 升级版：vector 和 string ⭐</h2>
+<p>这是 C++ 相比 C 最幸福的地方——<strong>能自动长大的数组</strong>和<strong>好用的文字串</strong>：</p>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>vector.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="当前有 3 个成绩：78 92 85
+名字长度：6
+拼接后：张三同学">▶ 运行</button></div>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;vector&gt;</span>      <span class="cm">// 可变长数组</span>
+<span class="kw">#include</span> <span class="str">&lt;string&gt;</span>      <span class="cm">// 文字串</span>
+<span class="kw">using namespace</span> std;
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    vector&lt;<span class="kw">int</span>&gt; score = {<span class="num">78</span>, <span class="num">92</span>};
+    score.<span class="fn">push_back</span>(<span class="num">85</span>);               <span class="cm">// 随时往后加，不用提前定大小！</span>
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"当前有 "</span> &lt;&lt; score.<span class="fn">size</span>() &lt;&lt; <span class="str">" 个成绩："</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> x : score) <span class="fn">cout</span> &lt;&lt; x &lt;&lt; <span class="str">" "</span>;   <span class="cm">// 新式遍历</span>
+    <span class="fn">cout</span> &lt;&lt; <span class="fn">endl</span>;
+
+    <span class="kw">string</span> name = <span class="str">"张三"</span>;
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"名字长度："</span> &lt;&lt; name.<span class="fn">length</span>() &lt;&lt; <span class="fn">endl</span>;
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"拼接后："</span> &lt;&lt; name + <span class="str">"同学"</span> &lt;&lt; <span class="fn">endl</span>;   <span class="cm">// 直接 + 拼接</span>
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<div class="tip"><b>💡 整数除法陷阱：</b>求平均分时 <code class="inline">sum / 5</code>（整数÷整数）会丢掉小数，记得写成 <code class="inline">sum / 5.0</code>。</div>
+
+<div class="quiz" data-q="q12">
+<p class="q">int a[10] 这个数组，合法的下标范围是？</p>
+<div class="opt" data-ok="0">1 ~ 10</div>
+<div class="opt" data-ok="1">0 ~ 9</div>
+<div class="opt" data-ok="0">0 ~ 10</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q13">
+<p class="q">折半查找（二分查找）使用的前提是？</p>
+<div class="opt" data-ok="0">数组里不能有重复元素</div>
+<div class="opt" data-ok="1">数组必须是排好序的</div>
+<div class="opt" data-ok="0">数组必须足够大</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q14">
+<p class="q">C++ 中"能自动长大"的数组类型是？</p>
+<div class="opt" data-ok="0">int a[]</div>
+<div class="opt" data-ok="1">vector</div>
+<div class="opt" data-ok="0">char a[100]</div>
+<div class="qmsg"></div>
+</div>
+`
+},
+
+/* ============ 第7章 结构体 ============ */
+{
+id:"ch7", icon:"🏗️", title:"数据的组织②：结构体", book:"教材第7章",
+html:`
+<span class="ch-tag">第 7 章</span><span class="book-tag">对应教材第 7 章 · 数据的组织与处理（2）结构</span>
+<h1>数据的组织②：结构体 🏗️</h1>
+<p class="lead">一个学生的信息有姓名、学号、成绩——类型各不相同，怎么打包？</p>
+
+<div class="analogy"><b>🪪 生活比喻：</b>结构体就是一张<strong>学生卡</strong>：姓名（string）、学号（int）、成绩（double）印在同一张卡上。卡就是一个整体，传递、存放都方便。</div>
+
+<h2>7.1 定义结构体（教材 7.1 节）</h2>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>struct.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="张三（学号 2026001）：88.5 分
+李四（学号 2026002）：92 分">▶ 运行</button></div>
+<pre><span class="cm">// 1. 设计"学生卡"的模板</span>
+<span class="kw">struct</span> <span class="ty">Student</span> {
+    <span class="kw">string</span> name;
+    <span class="kw">int</span>    id;
+    <span class="kw">double</span> score;
+};
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="cm">// 2. 按模板制作两张卡</span>
+    <span class="ty">Student</span> a = {<span class="str">"张三"</span>, <span class="num">2026001</span>, <span class="num">88.5</span>};
+    <span class="ty">Student</span> b = {<span class="str">"李四"</span>, <span class="num">2026002</span>, <span class="num">92.0</span>};
+
+    <span class="cm">// 3. 用"点号"访问卡上的每一项</span>
+    <span class="fn">cout</span> &lt;&lt; a.name &lt;&lt; <span class="str">"（学号 "</span> &lt;&lt; a.id &lt;&lt; <span class="str">"）："</span> &lt;&lt; a.score &lt;&lt; <span class="str">" 分"</span> &lt;&lt; <span class="fn">endl</span>;
+    <span class="fn">cout</span> &lt;&lt; b.name &lt;&lt; <span class="str">"（学号 "</span> &lt;&lt; b.id &lt;&lt; <span class="str">"）："</span> &lt;&lt; b.score &lt;&lt; <span class="str">" 分"</span> &lt;&lt; <span class="fn">endl</span>;
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<h2>7.2 结构数组：全班的名单（教材 7.1.4 节）</h2>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>starr.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="张三：88.5
+李四：92
+王五：76
+全班最高分：李四 92 分">▶ 运行</button></div>
+<pre><span class="ty">Student</span> cls[<span class="num">3</span>] = {
+    {<span class="str">"张三"</span>, <span class="num">2026001</span>, <span class="num">88.5</span>},
+    {<span class="str">"李四"</span>, <span class="num">2026002</span>, <span class="num">92.0</span>},
+    {<span class="str">"王五"</span>, <span class="num">2026003</span>, <span class="num">76.0</span>}
+};
+
+<span class="ty">Student</span> top = cls[<span class="num">0</span>];
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+    <span class="fn">cout</span> &lt;&lt; cls[i].name &lt;&lt; <span class="str">"："</span> &lt;&lt; cls[i].score &lt;&lt; <span class="fn">endl</span>;
+    <span class="kw">if</span> (cls[i].score &gt; top.score) top = cls[i];
+}
+<span class="fn">cout</span> &lt;&lt; <span class="str">"全班最高分："</span> &lt;&lt; top.name &lt;&lt; <span class="str">" "</span> &lt;&lt; top.score &lt;&lt; <span class="str">" 分"</span> &lt;&lt; <span class="fn">endl</span>;</pre>
+<div class="output"></div>
+</div>
+
+<div class="card"><b>🔗 教材还讲了链表（7.3 节）：</b>把一个个结构体用指针串成"糖葫芦"，可以灵活地插入、删除结点。它是数据结构课程的预演——大一阶段先知道有这个东西，会用结构数组解决实际问题就够了。</div>
+
+<div class="cppnote"><b>⚡ C++ 再进一步：</b>struct 之后还有 <code class="inline">class</code>（类）——不只是打包数据，还能把"操作数据的函数"也装进去，这就是<strong>面向对象编程（OOP）</strong>，大二的 C++ 课程会深入学习。</div>
+
+<div class="quiz" data-q="q15">
+<p class="q">访问结构体变量 a 的成员 score，正确的写法是？</p>
+<div class="opt" data-ok="0">a-&gt;score（a 不是指针）</div>
+<div class="opt" data-ok="1">a.score</div>
+<div class="opt" data-ok="0">a::score</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q16">
+<p class="q">结构体和数组最主要的区别是？</p>
+<div class="opt" data-ok="1">结构体可以打包不同类型的数据，数组只能存同类型</div>
+<div class="opt" data-ok="0">数组比结构体速度快</div>
+<div class="opt" data-ok="0">结构体不能定义多个变量</div>
+<div class="qmsg"></div>
+</div>
+`
+},
+
+/* ============ 第8章 文件 ============ */
+{
+id:"ch8", icon:"📁", title:"数据的组织③：文件", book:"教材第8章",
+html:`
+<span class="ch-tag">第 8 章</span><span class="book-tag">对应教材第 8 章 · 数据的组织与处理（3）文件</span>
+<h1>数据的组织③：文件 📁</h1>
+<p class="lead">程序一关，内存里的数据就没了。想永久保存？写到文件里。</p>
+
+<div class="analogy"><b>📓 生活比喻：</b>内存是你的<strong>短期记忆</strong>（睡一觉就忘），文件是你的<strong>笔记本</strong>（写下来永久保存）。程序"记笔记"分三步：<strong>打开本子 → 读写 → 合上本子</strong>。</div>
+
+<h2>8.1 把数据写进文件（教材 8.1 节）</h2>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>write.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="已写入 score.txt！
+（打开程序旁边的 score.txt，内容是：）
+张三 88.5
+李四 92">▶ 运行（模拟）</button></div>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;fstream&gt;</span>     <span class="cm">// 文件流工具箱</span>
+<span class="kw">using namespace</span> std;
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="fn">ofstream</span> <span class="fn">fout</span>(<span class="str">"score.txt"</span>);      <span class="cm">// 打开本子（没有就新建）</span>
+    fout &lt;&lt; <span class="str">"张三 "</span> &lt;&lt; <span class="num">88.5</span> &lt;&lt; <span class="fn">endl</span>;  <span class="cm">// 用法和 cout 一模一样！</span>
+    fout &lt;&lt; <span class="str">"李四 "</span> &lt;&lt; <span class="num">92</span> &lt;&lt; <span class="fn">endl</span>;
+    fout.<span class="fn">close</span>();                       <span class="cm">// 合上本子</span>
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"已写入 score.txt！"</span> &lt;&lt; <span class="fn">endl</span>;
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+<div class="codeblock lang-c">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>write.c<span class="lang-badge c">C</span><button class="run-btn" data-out="已写入 score.txt！
+（打开程序旁边的 score.txt，内容是：）
+张三 88.5
+李四 92">▶ 运行（模拟）</button></div>
+<pre><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">FILE</span> *fp = <span class="fn">fopen</span>(<span class="str">"score.txt"</span>, <span class="str">"w"</span>);   <span class="cm">// "w" = write 写模式</span>
+    <span class="fn">fprintf</span>(fp, <span class="str">"张三 %.1f\\n"</span>, <span class="num">88.5</span>);       <span class="cm">// fprintf 比 printf 多个文件参数</span>
+    <span class="fn">fprintf</span>(fp, <span class="str">"李四 %d\\n"</span>, <span class="num">92</span>);
+    <span class="fn">fclose</span>(fp);                              <span class="cm">// 合上本子</span>
+    <span class="fn">printf</span>(<span class="str">"已写入 score.txt！\\n"</span>);
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<h2>8.2 从文件读回数据（教材 8.2 节）</h2>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>read.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="读到：张三 88.5
+读到：李四 92
+全班平均分：90.25">▶ 运行（模拟）</button></div>
+<pre><span class="fn">ifstream</span> <span class="fn">fin</span>(<span class="str">"score.txt"</span>);       <span class="cm">// 打开本子准备读</span>
+<span class="kw">string</span> name; <span class="kw">double</span> s, sum = <span class="num">0</span>; <span class="kw">int</span> n = <span class="num">0</span>;
+
+<span class="kw">while</span> (fin &gt;&gt; name &gt;&gt; s) {          <span class="cm">// 一直读到文件结尾</span>
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"读到："</span> &lt;&lt; name &lt;&lt; <span class="str">" "</span> &lt;&lt; s &lt;&lt; <span class="fn">endl</span>;
+    sum += s; n++;
+}
+fin.<span class="fn">close</span>();
+<span class="fn">cout</span> &lt;&lt; <span class="str">"全班平均分："</span> &lt;&lt; sum / n &lt;&lt; <span class="fn">endl</span>;</pre>
+<div class="output"></div>
+</div>
+
+<div class="tip"><b>💡 记住三句话：</b>ofstream 写、ifstream 读、用完 close。用法和 cout/cin 几乎一样——<strong>cout 流向屏幕，fout 流向文件</strong>，仅此而已。</div>
+
+<div class="warn"><b>⚠️ 常见错误：</b>读文件前没有确认打开成功。正式写法是 <code class="inline">if (!fin) { cout &lt;&lt; "文件打不开！"; return 1; }</code>——文件名打错、路径不对都会打开失败。</div>
+
+<div class="quiz" data-q="q17">
+<p class="q">文件操作的正确顺序是？</p>
+<div class="opt" data-ok="1">打开 → 读写 → 关闭</div>
+<div class="opt" data-ok="0">读写 → 打开 → 关闭</div>
+<div class="opt" data-ok="0">关闭 → 打开 → 读写</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q18">
+<p class="q">C++ 中往文件里写数据应该用？</p>
+<div class="opt" data-ok="0">ifstream</div>
+<div class="opt" data-ok="1">ofstream</div>
+<div class="opt" data-ok="0">cin</div>
+<div class="qmsg"></div>
+</div>
+`
+},
+
+/* ============ 第9章 递归 ============ */
+{
+id:"ch9", icon:"🌀", title:"递归思想与相应算法", book:"教材第9章",
+html:`
+<span class="ch-tag">第 9 章</span><span class="book-tag">对应教材第 9 章 · 递归思想与相应算法</span>
+<h1>递归思想与相应算法 🌀</h1>
+<p class="lead">函数调用自己——听起来离谱，却是解决一大类问题的最优雅方式。</p>
+
+<div class="analogy"><b>🪆 生活比喻：</b>递归就是<strong>俄罗斯套娃</strong>：大问题里套着一个一模一样的小问题，一层层拆下去，直到最小的那个（<strong>终止条件</strong>）能直接解决，再一层层把答案带回来。</div>
+
+<h2>9.1 最经典的递归：阶乘（教材 9.1 节）</h2>
+<p>n! = n × (n-1)! —— 注意，定义本身就"套娃"：算 5! 需要 4!，算 4! 需要 3!……</p>
+
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>fact.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="5! = 120">▶ 运行</button></div>
+<pre><span class="kw">int</span> <span class="fn">fact</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span> (n == <span class="num">1</span>) <span class="kw">return</span> <span class="num">1</span>;          <span class="cm">// ① 终止条件：最小的娃娃</span>
+    <span class="kw">return</span> n * <span class="fn">fact</span>(n - <span class="num">1</span>);        <span class="cm">// ② 自己调自己：拆小一层</span>
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"5! = "</span> &lt;&lt; <span class="fn">fact</span>(<span class="num">5</span>) &lt;&lt; <span class="fn">endl</span>;
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<div class="card"><b>🔍 执行过程拆解（fact(5)）：</b>
+<pre style="background:var(--code-bg);border-radius:8px;padding:12px 16px;margin-top:8px">fact(5) = 5 × fact(4)
+        = 5 × 4 × fact(3)
+        = 5 × 4 × 3 × fact(2)
+        = 5 × 4 × 3 × 2 × fact(1)
+        = 5 × 4 × 3 × 2 × <b>1</b>   ← 碰到终止条件，开始往回带
+        = <b>120</b></pre>
+</div>
+
+<h2>9.2 递归两要素（必须背下来）</h2>
+<ul>
+<li><strong>① 终止条件</strong>：什么时候不再调用自己（n == 1）。<span style="color:var(--red)">没有它，就是无限套娃，程序崩溃（栈溢出）！</span></li>
+<li><strong>② 递推关系</strong>：大问题怎么变成"小问题 + 一步操作"（n! = n × (n-1)!）。</li>
+</ul>
+
+<h2>9.3 教材经典：斐波那契数列</h2>
+<p>1, 1, 2, 3, 5, 8, 13... 从第 3 项起，每项 = 前两项之和。递推关系天然写在定义里：</p>
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>fib.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="前 10 项：1 1 2 3 5 8 13 21 34 55">▶ 运行</button></div>
+<pre><span class="kw">int</span> <span class="fn">fib</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span> (n == <span class="num">1</span> || n == <span class="num">2</span>) <span class="kw">return</span> <span class="num">1</span>;   <span class="cm">// 终止条件</span>
+    <span class="kw">return</span> <span class="fn">fib</span>(n - <span class="num">1</span>) + <span class="fn">fib</span>(n - <span class="num">2</span>);     <span class="cm">// 递推关系</span>
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="fn">cout</span> &lt;&lt; <span class="str">"前 10 项："</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">10</span>; i++) <span class="fn">cout</span> &lt;&lt; <span class="fn">fib</span>(i) &lt;&lt; <span class="str">" "</span>;
+    <span class="fn">cout</span> &lt;&lt; <span class="fn">endl</span>;
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+<div class="output"></div>
+</div>
+
+<div class="tip"><b>💡 教材后续的精彩例题：</b>快速排序、八皇后问题、跳马问题、数字旋转方阵——它们都是递归思想的舞台。学完本章，你就拿到了打开算法大门的钥匙。</div>
+
+<div class="quiz" data-q="q19">
+<p class="q">一个递归函数<strong>必须</strong>具备什么，否则会永远运行直到崩溃？</p>
+<div class="opt" data-ok="0">循环语句</div>
+<div class="opt" data-ok="1">终止条件</div>
+<div class="opt" data-ok="0">两个参数</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q20">
+<p class="q">fact(3) 按上面的代码，返回值是多少？</p>
+<div class="opt" data-ok="0">3</div>
+<div class="opt" data-ok="1">6</div>
+<div class="opt" data-ok="0">9</div>
+<div class="qmsg"></div>
+</div>
+`
+},
+
+/* ============ 第10章 算法专题 ============ */
+{
+id:"ch10", icon:"🚀", title:"算法专题导览", book:"教材第10~15章",
+html:`
+<span class="ch-tag">第 10 章</span><span class="book-tag">对应教材第 10~15 章 · 算法思想专题</span>
+<h1>算法专题导览 🚀</h1>
+<p class="lead">教材后半部分是算法思想大餐。这里给你每道菜的"试吃装"，看懂思想，大二的算法课就稳了。</p>
+
+<h2>💰 贪心法（教材第 13 章）</h2>
+<div class="card"><b>找零问题：</b>要找给顾客 87 元，怎么给张数最少？<br>
+<strong>贪心策略：每次尽量给面额最大的。</strong>50 + 20 + 10 + 5 + 1 + 1 = 6 张搞定。<br>
+<small>思想：每一步都拿眼前最好的选择，最终得到全局最优（教材用"装船问题"讲解）。</small></div>
+
+<h2>🪜 动态规划（教材第 14 章）</h2>
+<div class="card"><b>爬楼梯问题：</b>共 10 级台阶，每次能跨 1 级或 2 级，有多少种走法？<br>
+<strong>关键观察：</strong>想到达第 n 级，最后一步要么从 n-1 级来，要么从 n-2 级来 → <code class="inline">f(n) = f(n-1) + f(n-2)</code>。咦，这不就是斐波那契！<br>
+<small>思想：把大问题拆成小问题，<strong>把小问题的答案存下来重复利用</strong>，不像朴素递归那样重复计算。</small></div>
+
+<div class="codeblock lang-cpp">
+<div class="code-head"><span class="dots"><i></i><i></i><i></i></span>dp.cpp<span class="lang-badge cpp">C++</span><button class="run-btn" data-out="10 级台阶有 89 种走法">▶ 运行</button></div>
+<pre><span class="cm">// 动态规划：从最小的台阶数开始，一路"存答案"</span>
+<span class="kw">int</span> f[<span class="num">11</span>];
+f[<span class="num">1</span>] = <span class="num">1</span>; f[<span class="num">2</span>] = <span class="num">2</span>;              <span class="cm">// 最小的答案直接知道</span>
+<span class="kw">for</span> (<span class="kw">int</span> n = <span class="num">3</span>; n &lt;= <span class="num">10</span>; n++)
+    f[n] = f[n-<span class="num">1</span>] + f[n-<span class="num">2</span>];      <span class="cm">// 用存好的小答案拼出大答案</span>
+
+<span class="fn">cout</span> &lt;&lt; <span class="str">"10 级台阶有 "</span> &lt;&lt; f[<span class="num">10</span>] &lt;&lt; <span class="str">" 种走法"</span> &lt;&lt; <span class="fn">endl</span>;</pre>
+<div class="output"></div>
+</div>
+
+<h2>🧭 搜索：宽度优先 & 深度优先（教材第 11、12 章）</h2>
+<div class="card"><b>走迷宫的两种策略：</b>
+<ul>
+<li><strong>深度优先（DFS）：</strong>一条路走到黑，撞墙了退回来换条路——像"不撞南墙不回头"。教材用"跳马问题"讲解。</li>
+<li><strong>宽度优先（BFS）：</strong>像水波纹一样一圈圈向外扩，最先到达终点的路线一定最短——教材用"骑士聚会问题"讲解。</li>
+</ul></div>
+
+<h2>🎲 蒙特卡罗法（教材第 15 章）</h2>
+<div class="card"><b>撒点求 π：</b>往一个 1×1 的正方形里随机撒 100 万个点，数有多少落在内切圆里。<br>
+落在圆里的比例 ≈ 圆面积/正方形面积 = π/4，所以 <strong>π ≈ 4 × 命中比例</strong>。<br>
+<small>思想：用大量<strong>随机试验</strong>逼近答案——计算机最擅长的"笨办法"，却是现代科学计算的利器。</small></div>
+
+<h2>🗺️ 这些思想的关系</h2>
+<table>
+<tr><th>算法思想</th><th>一句话概括</th><th>教材章节</th></tr>
+<tr><td>枚举法</td><td>全部试一遍，谁行谁上</td><td>第 4 章</td></tr>
+<tr><td>递归</td><td>自己调用自己，大事化小</td><td>第 9 章</td></tr>
+<tr><td>贪心</td><td>每步都选眼前最优</td><td>第 13 章</td></tr>
+<tr><td>动态规划</td><td>拆小问题 + 存答案复用</td><td>第 14 章</td></tr>
+<tr><td>DFS / BFS</td><td>穷举所有路径的两种走法</td><td>第 11、12 章</td></tr>
+<tr><td>蒙特卡罗</td><td>用随机试验逼近答案</td><td>第 15 章</td></tr>
+</table>
+
+<div class="tip"><b>💡 大一阶段的目标：</b>这些专题现在只需<strong>看懂思想、能复述</strong>，不要求独立实现。等学完数组、函数、递归，回头再逐个击破——教材的顺序就是这么设计的。</div>
+
+<div class="quiz" data-q="q21">
+<p class="q">动态规划相比朴素递归，最大的改进是？</p>
+<div class="opt" data-ok="0">代码更短</div>
+<div class="opt" data-ok="1">把小问题的答案存起来，避免重复计算</div>
+<div class="opt" data-ok="0">不需要终止条件</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q22">
+<p class="q">"每步都选眼前看起来最好的"描述的是哪种算法思想？</p>
+<div class="opt" data-ok="0">动态规划</div>
+<div class="opt" data-ok="1">贪心法</div>
+<div class="opt" data-ok="0">蒙特卡罗法</div>
+<div class="qmsg"></div>
+</div>
+`
+},
+
+/* ============ 第11章 调试与附录 ============ */
+{
+id:"ch11", icon:"🐛", title:"程序调试与速查附录", book:"教材附录A~D",
+html:`
+<span class="ch-tag">第 11 章</span><span class="book-tag">对应教材附录 A~D · 调试、库函数、格式控制</span>
+<h1>程序调试与速查附录 🐛</h1>
+<p class="lead">写代码 30% 的时间，找 bug 70% 的时间——教材专门用一个附录教调试，足见其重要。</p>
+
+<h2>🩺 新生最常见的 6 个错误（附"病历"）</h2>
+<table>
+<tr><th>症状</th><th>病因</th><th>药方</th></tr>
+<tr><td>报错 expected ';'</td><td>语句末尾漏了分号</td><td>检查上一行结尾</td></tr>
+<tr><td>报错 undeclared / 未声明</td><td>变量没"登记"就使用</td><td>先写 int x; 再用 x</td></tr>
+<tr><td>结果永远是乱码</td><td>变量没初始化就用</td><td>int sum = 0; 养成习惯</td></tr>
+<tr><td>判断条件总不对</td><td>把 == 写成了 =</td><td>比较用双等号</td></tr>
+<tr><td>小数算出来是整数</td><td>整数除整数丢小数</td><td>改成 ÷ 5.0</td></tr>
+<tr><td>cin/cout 报错不认识</td><td>漏了 using namespace std;</td><td>写在 #include 后面</td></tr>
+</table>
+
+<div class="warn"><b>⚠️ 报错了先看第一行错误！</b>编译器经常因为一个小错连锁报出几十条错误。从<strong>第一条</strong>开始修，后面一大片往往自动消失。</div>
+
+<h2>🔍 找 bug 三板斧（教材附录 A 的思路）</h2>
+<div class="card">
+<p><strong>第一招：大声读代码（小黄鸭调试法）</strong>🦆<br>把代码逐行念给小黄鸭（或舍友）听："这里我把 5 赋给 a……"——念到一半你自己就会拍脑袋。</p>
+<p><strong>第二招：打印大法</strong><br>在可疑位置插一句 <code class="inline">cout &lt;&lt; "i=" &lt;&lt; i &lt;&lt; " sum=" &lt;&lt; sum &lt;&lt; endl;</code>，把变量当时的值打出来，像给程序做体检。</p>
+<p><strong>第三招：注释掉一半</strong>✂️<br>把一半代码注释掉，看错误还在不在，快速缩小"嫌疑范围"。</p>
+</div>
+
+<h2>📚 常用库函数速查（教材附录 B）</h2>
+<table>
+<tr><th>功能</th><th>函数</th><th>需要的头文件</th><th>例子</th></tr>
+<tr><td>开平方</td><td><code class="inline">sqrt(x)</code></td><td>cmath</td><td>sqrt(16) → 4</td></tr>
+<tr><td>幂运算</td><td><code class="inline">pow(x,y)</code></td><td>cmath</td><td>pow(2,10) → 1024</td></tr>
+<tr><td>绝对值</td><td><code class="inline">fabs(x)</code></td><td>cmath</td><td>fabs(-3.5) → 3.5</td></tr>
+<tr><td>判断是否数字</td><td><code class="inline">isdigit(c)</code></td><td>cctype</td><td>isdigit('5') → 真</td></tr>
+<tr><td>判断是否字母</td><td><code class="inline">isalpha(c)</code></td><td>cctype</td><td>isalpha('A') → 真</td></tr>
+<tr><td>转大写</td><td><code class="inline">toupper(c)</code></td><td>cctype</td><td>toupper('a') → 'A'</td></tr>
+<tr><td>字符串长度</td><td><code class="inline">s.length()</code></td><td>string</td><td>"abc".length() → 3</td></tr>
+<tr><td>排序</td><td><code class="inline">sort(a, a+n)</code></td><td>algorithm</td><td>一行搞定排序！</td></tr>
+</table>
+
+<h2>🔤 ASCII 码常识（教材附录 C）</h2>
+<ul>
+<li>每个字符在电脑里都是一个数字：<code class="inline">'A'</code> = 65，<code class="inline">'a'</code> = 97，<code class="inline">'0'</code> = 48。</li>
+<li>大写 + 32 = 小写：<code class="inline">'A' + 32 == 'a'</code>，所以 <code class="inline">char('A'+1)</code> 是 'B'。</li>
+<li>数字字符转数字：<code class="inline">'5' - '0' == 5</code>（考试常客！）</li>
+</ul>
+
+<h2>🎯 输出格式控制对照表（教材附录 D）</h2>
+<table>
+<tr><th>想要的效果</th><th>C 写法（printf）</th><th>C++ 写法（cout + iomanip）</th></tr>
+<tr><td>小数留 2 位</td><td><code class="inline">printf("%.2f", x)</code></td><td><code class="inline">cout &lt;&lt; fixed &lt;&lt; setprecision(2) &lt;&lt; x</code></td></tr>
+<tr><td>占 5 格宽度</td><td><code class="inline">printf("%5d", x)</code></td><td><code class="inline">cout &lt;&lt; setw(5) &lt;&lt; x</code></td></tr>
+<tr><td>十六进制输出</td><td><code class="inline">printf("%x", x)</code></td><td><code class="inline">cout &lt;&lt; hex &lt;&lt; x</code></td></tr>
+</table>
+<p style="font-size:13px;color:var(--muted)">C++ 的 setw、setprecision 需要 <code class="inline">#include &lt;iomanip&gt;</code>。</p>
+
+<h2>🗓️ 配套 30 天学习计划</h2>
+<table>
+<tr><th>阶段</th><th>目标</th><th>每天做什么</th></tr>
+<tr><td>第 1-7 天</td><td>环境与基础语法</td><td>本网站第 1~3 章，装好 Dev-C++，每段代码亲手敲一遍</td></tr>
+<tr><td>第 8-14 天</td><td>分支循环 + 函数</td><td>第 4~5 章 + 写 3 个小程序（计算器、猜数字、成绩等级）</td></tr>
+<tr><td>第 15-21 天</td><td>数组与结构体</td><td>第 6~7 章 + 教材习题，重点啃冒泡排序</td></tr>
+<tr><td>第 22-30 天</td><td>文件 + 综合项目</td><td>第 8~9 章 + 做一个"学生成绩管理系统"（结构体数组 + 文件存取）</td></tr>
+</table>
+
+<div class="tip"><b>🎉 恭喜走完全程！</b>你已经按教材体系学完了程序设计的核心内容：<strong>变量、分支、循环、函数、数组、结构体、文件、递归</strong>，还见识了贪心、动态规划等算法思想。接下来就是：刷题、做项目、把代码变成肌肉记忆！</div>
+
+<div class="quiz" data-q="q23">
+<p class="q">cout 报错"未声明的标识符"，最可能是漏了哪一行？</p>
+<div class="opt" data-ok="0">#include &lt;cmath&gt;</div>
+<div class="opt" data-ok="1">using namespace std;</div>
+<div class="opt" data-ok="0">return 0;</div>
+<div class="qmsg"></div>
+</div>
+<div class="quiz" data-q="q24">
+<p class="q">表达式 '5' - '0' 的值是？</p>
+<div class="opt" data-ok="1">5</div>
+<div class="opt" data-ok="0">0</div>
+<div class="opt" data-ok="0">'5'</div>
+<div class="qmsg"></div>
+</div>
+`
+}
+];
+
+/* ==================================================
+   页面渲染 & 导航
+================================================== */
+const main = document.getElementById('main');
+const navList = document.getElementById('navList');
+let progress = JSON.parse(localStorage.getItem('prog_basic_v2') || '{}');
+
+/* 首页 */
+const HOME = {
+id:"home", icon:"🏠", title:"首页 · 学习地图", book:"",
+html:`
+<div class="hero">
+<h1>程序设计基础 · 零基础入门 🚀</h1>
+<p>专为"刚接触电脑"的大一新生设计 —— 按经典教材知识体系编排，<br>C / C++ 双语对照，用生活比喻 + 可运行代码 + 小测验带你迈出第一步。</p>
+<div class="bookline">📖 知识体系参照：《程序设计基础（第4版）》吴文虎 徐明星 邬晓钧 主编 · 清华大学出版社</div>
+</div>
+
+<h2>🔀 第一步：选择你的学习语言</h2>
+<p>本网站所有代码都有 <strong>C</strong> 和 <strong>C++</strong> 两个版本，点左上角侧栏的开关即可随时切换（教材默认使用 C++ 风格，推荐先学 C++）。</p>
+
+<h2>🗺️ 学习地图（点击任意章节开始学习）</h2>
+<div class="path-grid" id="pathGrid"></div>
+
+<h2>📚 本网站与教材章节对照</h2>
+<table>
+<tr><th>本网站章节</th><th>教材章节</th><th>核心内容</th></tr>
+<tr><td>第 1 章 绪论</td><td>第 1 章</td><td>程序设计是什么、C/C++ 语言简介</td></tr>
+<tr><td>第 2 章 编程准备</td><td>第 2 章</td><td>开发环境、cout 输出、算术运算、数学函数</td></tr>
+<tr><td>第 3 章 代数思维</td><td>第 3 章</td><td>变量、数据类型、赋值 5 要素、指针初步</td></tr>
+<tr><td>第 4 章 逻辑思维</td><td>第 4 章</td><td>关系运算、分支、循环、逻辑运算、枚举法</td></tr>
+<tr><td>第 5 章 函数思维</td><td>第 5 章</td><td>函数定义调用、参数传递、引用、重载</td></tr>
+<tr><td>第 6 章 数组</td><td>第 6 章</td><td>数组、查找、冒泡排序、二维数组、vector/string</td></tr>
+<tr><td>第 7 章 结构体</td><td>第 7 章</td><td>struct、结构数组、链表概念</td></tr>
+<tr><td>第 8 章 文件</td><td>第 8 章</td><td>文件读写、fstream</td></tr>
+<tr><td>第 9 章 递归</td><td>第 9 章</td><td>递归两要素、阶乘、斐波那契</td></tr>
+<tr><td>第 10 章 算法专题</td><td>第 10~15 章</td><td>贪心、动态规划、搜索、蒙特卡罗</td></tr>
+<tr><td>第 11 章 调试与附录</td><td>附录 A~D</td><td>调试方法、库函数、ASCII、格式控制</td></tr>
+</table>
+
+<div class="tip"><b>📌 建议学法：</b>按顺序学习，每章 20~30 分钟。看到"▶ 运行"就点，看到代码就敲，看到测验就答——进度会自动保存在这台电脑上。</div>
+`
+};
+
+const ALL = [HOME, ...CHAPTERS];
+
+/* 渲染导航 */
+function renderNav(){
+  navList.innerHTML = '';
+  ALL.forEach((c,i)=>{
+    const div = document.createElement('div');
+    div.className = 'nav-item' + (progress[c.id] ? ' done' : '');
+    div.dataset.id = c.id;
+    div.innerHTML = `<span>${c.icon}</span><span>${i===0?'':('第'+i+'章 · ')}${c.title}</span><span class="tick">✔</span>`;
+    div.onclick = ()=>show(c.id);
+    navList.appendChild(div);
+  });
+  updateProg();
+}
+
+/* 首页卡片 */
+function renderHomeCards(){
+  const grid = document.getElementById('pathGrid');
+  if(!grid) return;
+  CHAPTERS.forEach((c,i)=>{
+    const card = document.createElement('div');
+    card.className='path-card';
+    card.innerHTML = `<div class="pn">${c.icon}</div><h3>第${i+1}章 · ${c.title}</h3><p>${c.book} ｜ ${progress[c.id]?'✅ 已完成':'▶ 点击开始'}</p>`;
+    card.onclick = ()=>show(c.id);
+    grid.appendChild(card);
+  });
+}
+
+/* 显示章节 */
+function show(id){
+  const ch = ALL.find(c=>c.id===id);
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.id===id));
+  main.innerHTML = ch.html + (id==='home' ? '' : `
+    <button class="done-btn ${progress[id]?'finished':''}" onclick="markDone('${id}')">
+      ${progress[id]?'✔ 本章已完成':'✅ 我学完了，标记完成'}
+    </button>
+    <div class="nav-arrows">
+      <button onclick="prevCh('${id}')">← 上一章</button>
+      <button onclick="nextCh('${id}')">下一章 →</button>
+    </div>`);
+  if(id==='home') renderHomeCards();
+  bindAll();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function prevCh(id){ const i=ALL.findIndex(c=>c.id===id); if(i>0) show(ALL[i-1].id); }
+function nextCh(id){ const i=ALL.findIndex(c=>c.id===id); if(i<ALL.length-1) show(ALL[i+1].id); }
+
+/* 完成标记 */
+function markDone(id){
+  progress[id]=true;
+  localStorage.setItem('prog_basic_v2', JSON.stringify(progress));
+  renderNav(); show(id);
+}
+
+function updateProg(){
+  const total = CHAPTERS.length;
+  const done = CHAPTERS.filter(c=>progress[c.id]).length;
+  document.getElementById('progText').textContent = done+' / '+total;
+  document.getElementById('progFill').style.width = (done/total*100)+'%';
+}
+
+/* ==================================================
+   C / C++ 语言切换
+================================================== */
+function setLang(lang){
+  document.body.className = 'mode-'+lang;
+  document.getElementById('btnC').className = lang==='c'?'on-c':'';
+  document.getElementById('btnCpp').className = lang==='cpp'?'on-cpp':'';
+  localStorage.setItem('prog_lang', lang);
+}
+const savedLang = localStorage.getItem('prog_lang') || 'cpp';
+setLang(savedLang);
+
+/* ==================================================
+   交互：运行按钮、测验
+================================================== */
+function bindAll(){
+  document.querySelectorAll('.run-btn').forEach(btn=>{
+    btn.onclick = ()=>{
+      const out = btn.closest('.codeblock').querySelector('.output');
+      const text = btn.dataset.out;
+      out.style.display='block';
+      out.innerHTML='<span class="lbl">程序输出：</span>';
+      let i=0;
+      btn.disabled=true; btn.textContent='运行中...';
+      const t=setInterval(()=>{
+        out.innerHTML = '<span class="lbl">程序输出：</span>'+text.slice(0,++i).replace(/\n/g,'<br>');
+        if(i>=text.length){clearInterval(t);btn.disabled=false;btn.textContent='▶ 再运行一次';}
+      },30);
+    };
+  });
+  document.querySelectorAll('.quiz').forEach(qz=>{
+    const msg = qz.querySelector('.qmsg');
+    qz.querySelectorAll('.opt').forEach(opt=>{
+      opt.onclick = ()=>{
+        if(opt.dataset.ok==='1'){
+          opt.classList.add('right');
+          qz.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));
+          msg.innerHTML='🎉 回答正确！';
+          msg.style.color='var(--green)';
+        }else{
+          opt.classList.add('wrong');
+          msg.innerHTML='💡 再想想～点其他选项试试';
+          msg.style.color='var(--red)';
+          setTimeout(()=>opt.classList.remove('wrong'),700);
+        }
+      };
+    });
+  });
+  if(document.getElementById('bubbleBoxes')) bubbleRender(bubbleInit.slice(), -1, -1);
+}
+
+/* ==================================================
+   各章演示器
+================================================== */
+function varDemo(){
+  const n=document.getElementById('vName').value||'无名';
+  const a=document.getElementById('vAge').value||0;
+  document.getElementById('boxName').textContent=n;
+  document.getElementById('boxAge').textContent=a;
+  document.getElementById('varOut').innerHTML=
+    `👉 输出：<b>我叫${n}，今年${a}岁</b>`;
+}
+function ifDemo(v){
+  v=+v;
+  document.getElementById('scoreVal').textContent=v;
+  ['br1','br2','br3','br4'].forEach(id=>document.getElementById(id).classList.remove('hit'));
+  const hit = v>=90?'br1':v>=80?'br2':v>=60?'br3':'br4';
+  document.getElementById(hit).classList.add('hit');
+}
+let loopTimer=null;
+function loopDemo(){
+  const n=Math.min(10,Math.max(1,+document.getElementById('loopN').value||5));
+  const out=document.getElementById('loopOut');
+  if(loopTimer)clearInterval(loopTimer);
+  let i=1, log='';
+  out.innerHTML='开始循环 for (int i = 1; i &lt;= '+n+'; i++)';
+  loopTimer=setInterval(()=>{
+    if(i>n){
+      clearInterval(loopTimer);
+      out.innerHTML=log+`<br><b style="color:var(--green)">条件 i&lt;=${n} 不成立（i=${i}），循环结束 ✅</b>`;
+      return;
+    }
+    log+=`<br>第${i}次：i = ${i} → 执行循环体 → i++ 后 i = ${i+1}`;
+    out.innerHTML=log;
+    i++;
+  },650);
+}
+function funcDemo(){
+  const a=+document.getElementById('fa').value||0, b=+document.getElementById('fb').value||0;
+  document.getElementById('funcOut').innerHTML=
+    `调用 max(${a}, ${b}) ……<br>机器内部：${a} &gt; ${b} 吗？${a>b?'是':'否'}<br>👉 返回值：<b>${Math.max(a,b)}</b>`;
+}
+
+/* 冒泡排序动画 */
+const bubbleInit=[78,92,85,60,99];
+let bubbleArr=null, bubbleI=0, bubbleJ=0, bubbleTimer=null;
+function bubbleRender(arr, hi1, hi2){
+  const box=document.getElementById('bubbleBoxes');
+  if(!box) return;
+  box.innerHTML = arr.map((v,i)=>
+    `<div class="vbox" style="min-width:90px;${(i===hi1||i===hi2)?'border-color:var(--red);transform:scale(1.08)':''}"><div class="vtype">a[${i}]</div><div class="vval" style="${(i===hi1||i===hi2)?'color:var(--red)':''}">${v}</div></div>`
+  ).join('');
+}
+function bubbleDemo(){
+  if(bubbleArr===null||bubbleJ>=4-bubbleI){ bubbleArr=bubbleInit.slice(); bubbleI=0; bubbleJ=0; }
+  if(bubbleTimer) return;
+  const info=document.getElementById('bubbleInfo');
+  bubbleTimer=setInterval(()=>{
+    if(bubbleJ>=4-bubbleI){
+      bubbleI++; bubbleJ=0;
+      if(bubbleI>=4){
+        clearInterval(bubbleTimer); bubbleTimer=null;
+        bubbleRender(bubbleArr,-1,-1);
+        info.textContent='✅ 排序完成：'+bubbleArr.join(' ');
+        bubbleArr=null;
+        return;
+      }
+      info.textContent=`—— 第 ${bubbleI+1} 趟开始 ——`;
+    }
+    const j=bubbleJ;
+    bubbleRender(bubbleArr,j,j+1);
+    if(bubbleArr[j]>bubbleArr[j+1]){
+      [bubbleArr[j],bubbleArr[j+1]]=[bubbleArr[j+1],bubbleArr[j]];
+      info.textContent=`比较 a[${j}] 和 a[${j+1}]：前大后小 → 交换！`;
+    }else{
+      info.textContent=`比较 a[${j}] 和 a[${j+1}]：顺序正确，不动`;
+    }
+    setTimeout(()=>bubbleRender(bubbleArr,j,j+1),350);
+    bubbleJ++;
+  },900);
+}
+
+/* 启动 */
+renderNav();
+show('home');
+</script>
+</body>
+</html>
